@@ -1,0 +1,157 @@
+---
+title: "Week 2 Data Exploration"
+author: "Haille Bright"
+date: "2026-09-05"
+output: word_document
+---
+```{r}
+oat <- read.csv("oat.csv")
+bacteria <- read.csv("bacteria.csv")
+```
+# Oat Dataset
+
+## Research Question and Hypothesis
+
+The researchers are interested in whether the mean number of grains per ear is related to oat yield and if grain number could be used to predict yield.
+
+**Hypothesis:** Oat plots with a greater mean number of grains per ear will have a higher yield.
+
+## Variables
+
+- **Response variable:** `yield` — oat yield in t/ha; numerical continuous
+- **Focal predictor:** `grain` — estimated mean number of grains per ear; numerical continuous
+- **Covariates:** None
+```{r}
+head(oat)
+str(oat)
+summary(oat)
+```
+## Exploring the Grain Variable
+
+
+
+```{r}
+dotchart(oat$grain,
+         main = "Mean Number of Grains per Ear",
+         xlab = "Mean number of grains per ear")
+
+boxplot(oat$grain,
+        horizontal = TRUE,
+        main = "Mean Number of Grains per Ear",
+        xlab = "Mean number of grains per ear")
+
+hist(oat$grain,
+     main = "Distribution of Mean Number of Grains per Ear",
+     xlab = "Mean number of grains per ear")
+```
+
+I noticed one extreme outlier in the grain data with a value of 2528 grains per ear, while the rest of the values were around 18–30 grains per ear. Since this value is so much higher than the others, it has a large effect on what the distribution looks like. I would want to investigate this value further before continuing with the analysis.
+
+## Exploring the Yield Variable
+```
+dotchart(oat$yield,
+         main = "Oat Yield",
+         xlab = "Yield (t/ha)")
+
+boxplot(oat$yield,
+        horizontal = TRUE,
+        main = "Oat Yield",
+        xlab = "Yield (t/ha)")
+
+hist(oat$yield,
+     main = "Distribution of Oat Yield",
+     xlab = "Yield (t/ha)")
+
+```
+
+The yield variable ranged from around 4.9 to 5.9 t/ha. The dot chart, boxplot, and histogram did not show any big outliers in yield.
+
+## Relationship Between Grain Number and Yield
+
+```{r}
+plot(oat$grain, oat$yield,
+     xlab = "Mean number of grains per ear",
+     ylab = "Yield (t/ha)",
+     main = "Oat Yield vs. Number of Grains",
+     pch = 1)
+
+plot(oat$grain[-16], oat$yield[-16],
+     xlab = "Mean number of grains per ear",
+     ylab = "Yield (t/ha)",
+     main = "Oat Yield vs. Number of Grains (Excluding Outlier)",
+     pch = 1)
+
+cor(oat$grain, oat$yield)
+
+cor(oat$grain[-16], oat$yield[-16])
+```
+When all 20 observations were included, the correlation between grain number and yield was only 0.034, showing almost no relationship. I did noticed that the grain value of 2528 was an extreme outlier and had a large effect on the results. When I looked at the data without the outlier, there was a much clearer positive relationship between grain number and yield, with a correlation of 0.859. This suggests that oats with more grains per ear may also have a higher yield. Before making any conclusions, though, I would want to know why the value of 2528 is so different from the rest of the data.
+
+
+# Bacteria Dataset
+
+## Research Question and Hypothesis
+
+The researchers want to know if the amount of toxin produced differs between the four bacterial species and between patients with four different diagnoses. Two of the diagnoses are carcinogenic and two are non-carcinogenic. They also want to determine if any of the bacterial species could be used as an indicator of carcinogenic disease.
+
+**Hypothesis:** I predict that toxin production will differ between the bacterial species and diagnoses. I also expect patients with carcinogenic diseases to have higher toxin levels than patients with non-carcinogenic diseases.
+
+## Variables
+
+- **Response variable:** `toxin` — amount of toxin produced (units/μL); numerical continuous
+- **Focal predictor:** `species` — bacterial species (bacterA, bacterB, bacterC, bacterD); categorical
+- **Focal predictor:** `diagnosis` — patient diagnosis (carc.intestine, carc.rectum, apendicitis, skin.absces); categorical
+- **Covariates:** None
+
+## Initial Data Exploration
+
+```{r}
+head(bacteria)
+str(bacteria)
+summary(bacteria)
+
+table(bacteria$species)
+table(bacteria$diagnosis)
+table(bacteria$species, bacteria$diagnosis)
+```
+
+## Exploring Toxin Production
+
+```{r}
+dotchart(bacteria$toxin,
+         main = "Toxin Production",
+         xlab = "Toxin (units/μL)")
+```
+
+```{r}
+hist(bacteria$toxin,
+     main = "Distribution of Toxin Production",
+     xlab = "Toxin (units/μL)")
+```
+
+```{r}
+boxplot(toxin ~ species, data = bacteria,
+        main = "Toxin Production by Bacterial Species",
+        xlab = "Bacterial species",
+        ylab = "Toxin (units/μL)")
+```
+
+```{r}
+boxplot(toxin ~ diagnosis, data = bacteria,
+        main = "Toxin Production by Diagnosis",
+        xlab = "Diagnosis",
+        ylab = "Toxin (units/μL)")
+```
+
+```{r}
+boxplot(toxin ~ species * diagnosis, data = bacteria,
+        main = "Toxin Production by Species and Diagnosis",
+        xlab = "Species and diagnosis",
+        ylab = "Toxin (units/μL)",
+        las = 2)
+        aggregate(toxin ~ species + diagnosis,
+          data = bacteria,
+          FUN = mean)
+```
+
+The bacteria dataset was balanced, with five observations for each combination of bacterial species and diagnosis. Looking at the information from the graphs, I noticed that toxin production was higher for the two carcinogenic diagnoses compared to the appendicitis and skin abscess. This difference seemed more noticeable for bacterA and bacterD. Both of the species had higher mean toxin levels for intestinal and rectal carcinoma than they did for the two non carcinogenic diagnoses. Based on what I saw in the graphs, bacterA and bacterD may be useful indicators of carcinogenic disease, but I would need to do more statistical analysis.
