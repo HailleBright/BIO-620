@@ -1,0 +1,123 @@
+---
+title: 'Week 3 Assignment #4'
+author: "Haille Bright"
+date: "2026-09-10"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r}
+wheat <- read.csv("Datasets-3/wheat.csv")
+```
+
+# Assignment 4: Wheat Data Exploration
+## Research Hypothesis and Variables
+Research hypothesis: I hypothesize that wheat yield is related to the number of winter plants and ears, as well as soil conditions including pH, phosphorus (P), potassium (K), and magnesium (Mg).
+Variables: Yield is the response variable. Winter, ears, pH, P, K, and Mg are the predictor variables. All of the variables in this dataset are numerical.
+## Descriptive Statistics
+```{r}
+summary(wheat)
+```
+## Visual Data Exploration
+### Yield
+```{r}
+hist(wheat$yield,
+     main = "Distribution of Wheat Yield",
+     xlab = "Yield")
+```
+### Winter
+```{r}
+hist(wheat$winter,
+     main = "Distribution of Winter",
+     xlab = "Winter")
+```
+### Ears
+```{r}
+hist(wheat$ears,
+     main = "Distribution of Ears",
+     xlab = "Ears")
+```
+### pH
+```{r}
+hist(wheat$pH,
+     main = "Distribution of Soil pH",
+     xlab = "pH")
+```
+### Phosphorus (P)
+```{r}
+hist(wheat$P,
+     main = "Distribution of Phosphorus",
+     xlab = "Phosphorus (P)")
+```
+### Potassium (K)
+```{r}
+hist(wheat$K,
+     main = "Distribution of Potassium",
+     xlab = "Potassium (K)")
+```
+### Magnesium (Mg)
+```{r}
+hist(wheat$Mg,
+     main = "Distribution of Magnesium",
+     xlab = "Magnesium (Mg)")
+```
+## Yield and Predictor Relationships
+
+### Yield vs. Winter
+```{r}
+plot(wheat$winter, wheat$yield,
+     xlab = "Winter",
+     ylab = "Yield",
+     main = "Wheat Yield vs. Winter")
+```
+### Yield vs. Ears
+```{r}
+plot(wheat$ears, wheat$yield,
+     xlab = "Ears",
+     ylab = "Yield",
+     main = "Wheat Yield vs. Ears")
+```
+### Yield vs. pH
+```{r}
+plot(wheat$pH, wheat$yield,
+     xlab = "pH",
+     ylab = "Yield",
+     main = "Wheat Yield vs. Soil pH")
+```
+### Yield vs. Phosphorus
+```{r}
+plot(wheat$P, wheat$yield,
+     xlab = "Phosphorus (P)",
+     ylab = "Yield",
+     main = "Wheat Yield vs. Phosphorus")
+```
+### Yield vs. Potassium
+```{r}
+plot(wheat$K, wheat$yield,
+     xlab = "Potassium (K)",
+     ylab = "Yield",
+     main = "Wheat Yield vs. Potassium")
+```
+### Yield vs. Magnesium
+```{r}
+plot(wheat$Mg, wheat$yield,
+     xlab = "Magnesium (Mg)",
+     ylab = "Yield",
+     main = "Wheat Yield vs. Magnesium")
+```
+## Complete Scatterplot Matrix
+```{r}
+pairs(wheat)
+```
+## Correlation Matrix
+```{r}
+cor(wheat)
+```
+## Outlier Exploration
+```{r}
+boxplot(wheat)
+```
+## Patterns and Observations
+The strongest relationship I found with wheat yield was winter, which had a positive correlation of about 0.43. The other variables had a lot more weaker correlations with yield. I also noticed a strong positive relationship between pH and phosphorus, with a correlation of about 0.70. There were some possible outliers in the data, especially for potassium, which had several unusually high values. Ears and magnesium also appeared to have possible high outliers. Overall, winter seems to have the clearest relationship with wheat yield in this dataset.
