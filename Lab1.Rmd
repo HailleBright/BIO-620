@@ -1,0 +1,143 @@
+---
+title: "Lab 1"
+author: "Haille Bright"
+date: "2026-09-08"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Lab 1: R Basics
+
+## Question 1
+```{r}
+12 %% 5
+```
+The remainder of 12 divided by 5 is 2.
+
+## Question 2
+```{r}
+x <- 1:10
+x
+y <- 1/x
+y
+plot(x, y)
+```
+## Question 3
+```{r}
+rep(1:5, rep(3,5))
+rep(1:5, 1:5)
+rep(1:5, c(1,2,3,2,1))
+rep(c("A","B","C"), c(4,3,2))
+```
+The first line represents each number from 1 through 5 three tines because rep(3,5) tells R to repeat each of the five numbers three different times.
+The second line repeats each number based on its value. The number 1 is repeated once, 2 is repeated twice, 3 is repeated three times, and so on through 5.
+The third line uses the vector c(1,2,3,2,1) to tell R how many times to repeat each number from 1 through 5. The numbers are repeated 1, 2, 3, 2, and 1 times in that order.
+The fourth line repeats A four times, B three times, and C two times because the vector c(4,3,2) gives the number of repetitions for each corresponding letter.
+## Question 4
+```{r}
+even_numbers <- seq(0, 100, 2)
+even_numbers
+summary(even_numbers)
+sum(even_numbers)
+sd(even_numbers)
+var(even_numbers)
+```
+## Question 5
+```{r}
+y <- c(8,3,5,7,6,6,8,9,2,3,9,4,10,4,11)
+y
+y %% 2
+which(y %% 2 == 0)
+which(y %% 2 == 1)
+```
+## Question 6
+```{r}
+400 / 17
+(12 * 6 * 15) / (40 / 21)
+3 / 250
+log10(1000)
+```
+## Question 7
+```{r}
+seq(0, 16, 4)
+seq(0.3, 1.5, 0.3)
+seq(0, -40, -10)
+rep(c("tropics", "temperate", "boreal"), each = 3)
+```
+## Question 8
+```{r}
+q8 <- c(5, 3, 8, 2, 9, 3, 6, 9, 1, 0, 2, 7)
+q8
+sum(q8)
+mean(q8)
+length(q8)
+```
+## Question 9
+```{r}
+q9 <- c(3, 9, 6, 1, 9, 4, 7, 8, 2, 6, 3, 8, 0, 2, 5)
+q9
+sort(q9)
+rev(sort(q9))
+
+```
+## Question 10
+```{r}
+
+```
+10A. setwd() sets the working directory in R. The argument dir tells R which directory or folder to use.
+10B. read.table() reads data from a file in table format and creates a data frame. The main argument file tells R which file to read.
+10C. names() gets or sets the names of an R object. The argument x is the object whose names you want to view or change.
+10D. attach() attaches a data set to R’s search path so its variables can be accessed by their names. The main argument is the data set or object you want to attach.
+10E. range() returns the minimum and maximum values of a set of data. The arguments are the values or objects whose range you want to find.
+## Question 11
+```{r}
+apes <- read.table("Datasets-3/orangutanCSV.csv", header = TRUE, sep = "\t")
+names(apes)
+str(apes)
+apes[apes$location == "Borneo", ]
+males <- apes[apes$sex == "male", ]
+males[order(males$weight.kg, decreasing = TRUE), ]
+min(apes$weight.kg)
+females <- apes[apes$sex == "female", ]
+range(females$weight.kg)
+mean(apes$weight.kg[apes$location == "Sumatra"])
+sum(apes$Tool.use)
+sort(females$weight.kg, decreasing = TRUE)
+sum(sort(females$weight.kg, decreasing = TRUE)[1:3])
+```
+11B. The column names are individual, location, weight.kg, sex, and Tool.use. Weight.kg is continuous, and individual, location, sex, and Tool.use are categorical.
+## Question 12
+```{r}
+organisms <- c("wolf", "bear", "eagle", "salmon", "frog",
+               "turtle", "butterfly", "oak", "mushroom", "shark")
+
+organisms
+sample(organisms, size = 10, replace = TRUE)
+sample(organisms, size = 10, replace = TRUE)
+sample(organisms, size = 10, replace = FALSE)
+sample(organisms, size = 10, replace = FALSE)
+```
+When sampling with replacement, an organism can be selected more than once because it is put back into the sample after being selected. When sampling without replacement, each organism can only be selected once.
+## Question 13
+```{r}
+baseball <- read.table("Datasets-3/baseballCSV.csv", header = TRUE, sep = "\t")
+names(baseball)
+sum(baseball$Games)
+sum(baseball$Wins)
+sum(baseball$Losses)
+win_loss_difference <- baseball$Wins - baseball$Losses
+win_loss_difference
+max(win_loss_difference)
+min(win_loss_difference)
+baseball$Franchise[win_loss_difference == 203]
+baseball$Franchise[win_loss_difference == -194]
+baseball[order(baseball$Win.Loss.Percent, decreasing = TRUE), ]
+baseball[baseball$Win.Loss.Percent >= 0.667, c("Franchise", "Win.Loss.Percent")]
+run_ratio <- baseball$Runs.Allowed / baseball$Runs.Scored
+run_ratio
+plot(run_ratio, baseball$Win.Loss.Percent)
+abline(lm(baseball$Win.Loss.Percent ~ run_ratio))
+```
+
