@@ -1,0 +1,45 @@
+---
+title: "Week 5 Assign. 3"
+author: "Haille Bright"
+date: "2026-09-25"
+output: word_document
+---
+## Assignment 3: Quine Dataset
+```{r}
+quine <- read.csv("quine.csv")
+
+quine$Eth <- as.factor(quine$Eth)
+quine$Sex <- as.factor(quine$Sex)
+quine$Age <- as.factor(quine$Age)
+quine$Lrn <- as.factor(quine$Lrn)
+
+str(quine)
+```
+```{r}
+quine$Eth <- as.factor(quine$Eth)
+quine$Sex <- as.factor(quine$Sex)
+quine$Age <- as.factor(quine$Age)
+quine$Lrn <- as.factor(quine$Lrn)
+
+str(quine)
+```
+```{r}
+quine_model <- aov(Days ~ Eth + Sex + Age + Lrn, data = quine)
+
+summary(quine_model)
+```
+```{r}
+TukeyHSD(quine_model)
+```
+```{r}
+boxplot(Days ~ Eth, data = quine,
+        xlab = "Ethnicity",
+        ylab = "Days Absent",
+        main = "Days Absent by Ethnicity")
+
+boxplot(Days ~ Age, data = quine,
+        xlab = "Age Group",
+        ylab = "Days Absent",
+        main = "Days Absent by Age Group")
+```
+The ANOVA showed that ethnicity and age were significant predictors of the number of days absent. Ethnicity was significant (p < 0.001), while age was also significant (p = 0.031). Sex (p = 0.275) and learner status (p = 0.087) were not significant predictors. The Tukey HSD test showed that the N ethnicity group had significantly fewer days absent than the A group (p < 0.001). For age, the only significant difference was between the F1 and F2 groups (p = 0.045), with the F2 group having more days absent than the F1 group.
