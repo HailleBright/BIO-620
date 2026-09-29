@@ -1,0 +1,58 @@
+---
+title: "BIO 620 Week 6 – Assignment 2"
+author: "Haille Bright"
+date: "2026-09-29"
+output: word_document
+---
+## Assignment 2
+Estimate the proportion of individuals who like chocolate using Bayesian statistics.
+```{r}
+# Number of people surveyed
+total <- 50
+
+# Number of people who like chocolate
+successes <- 45
+```
+```{r}
+# Set the parameters for the prior beta distribution
+a <- 52.22
+b <- 9.52
+
+# Plot the prior distribution
+p <- seq(0, 1, length = 1000)
+plot(p, dbeta(p, a, b),
+     type = "l",
+     xlab = "Proportion who like chocolate",
+     ylab = "Density",
+     main = "Prior Distribution")
+```
+```{r}
+# Calculate the likelihood
+likelihood <- dbinom(successes, size = total, prob = p)
+
+# Plot the likelihood
+plot(p, likelihood,
+     type = "l",
+     xlab = "Proportion who like chocolate",
+     ylab = "Likelihood",
+     main = "Likelihood Distribution")
+```
+```{r}
+# Calculate posterior parameters
+posterior_a <- a + successes
+posterior_b <- b + (total - successes)
+
+# Plot the posterior distribution
+plot(p, dbeta(p, posterior_a, posterior_b),
+     type = "l",
+     xlab = "Proportion who like chocolate",
+     ylab = "Density",
+     main = "Posterior Distribution")
+```
+```{r}
+# Calculate the posterior mean
+posterior_mean <- posterior_a / (posterior_a + posterior_b)
+
+posterior_mean
+```
+The survey found that 45 out of 50 individuals liked chocolate, giving an observed proportion of 0.90. The prior distribution estimated that the proportion was most likely around 0.85. After combining the prior information with the survey data, the posterior mean was approximately 0.87. Based on the Bayesian analysis, the estimated proportion of individuals who like chocolate is about 87%.
