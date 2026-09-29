@@ -1,0 +1,238 @@
+---
+title: "BIO620 Week 6 – Assignment 3"
+author: "Haille Bright"
+date: "2026-09-29"
+output: word_document
+---
+
+## Assignment 3
+Bayesian analysis of unknown dice rolls.
+```{r}
+# Possible dice types
+dice <- c(4, 6, 8, 10, 12, 20)
+
+# Dice rolls for each player
+benji_rolls <- c(8, 8, 5, 16, 6, 8)
+marcus_rolls <- c(12, 8, 2, 1, 4, 7)
+carrie_rolls <- c(5, 8, 7, 3, 2, 6)
+lucy_rolls <- c(3, 5, 2, 3, 4, 3)
+```
+```{r}
+# Prior probabilities based on each player's dice collection
+benji_prior <- c(25, 5, 10, 15, 20, 25) / 100
+marcus_prior <- c(4, 8, 16, 32, 25, 15) / 100
+carrie_prior <- c(20, 19, 20, 20, 1, 20) / 100
+lucy_prior <- c(4, 6, 8, 10, 12, 60) / 100
+```
+```{r}
+# Function to calculate log-likelihood for a die
+dice_loglik <- function(rolls, sides) {
+  if (any(rolls > sides)) {
+    return(-Inf)
+  } else {
+    return(length(rolls) * log(1 / sides))
+  }
+}
+
+# Calculate Benji's log-likelihood for each die type
+benji_loglik <- sapply(dice, function(x) dice_loglik(benji_rolls, x))
+
+# Display results
+data.frame(
+  Die = paste0("d", dice),
+  LogLikelihood = benji_loglik
+)
+```
+```{r}
+# Convert log-likelihoods to likelihoods
+benji_likelihood <- exp(benji_loglik)
+
+# Combine likelihood with Benji's prior
+benji_posterior <- benji_likelihood * benji_prior
+
+# Normalize posterior probabilities
+benji_posterior <- benji_posterior / sum(benji_posterior)
+
+# Display posterior probabilities
+data.frame(
+  Die = paste0("d", dice),
+  Posterior = benji_posterior
+)
+```
+```{r}
+# Prepare log-likelihood values for plotting
+benji_plot_loglik <- benji_loglik
+benji_plot_loglik[is.infinite(benji_plot_loglik)] <- 
+  min(benji_loglik[is.finite(benji_loglik)]) - 5
+
+# Plot Benji's log-likelihood
+barplot(benji_plot_loglik,
+        names.arg = paste0("d", dice),
+        xlab = "Die Type",
+        ylab = "Log-Likelihood",
+        main = "Benji: Log-Likelihood")
+```
+```{r}
+# Plot Benji's posterior probabilities
+barplot(benji_posterior,
+        names.arg = paste0("d", dice),
+        xlab = "Die Type",
+        ylab = "Posterior Probability",
+        main = "Benji: Posterior Probability",
+        ylim = c(0, 1))
+```
+```{r}
+# Calculate Marcus's log-likelihood for each die type
+marcus_loglik <- sapply(dice, function(x) dice_loglik(marcus_rolls, x))
+
+# Display results
+data.frame(
+  Die = paste0("d", dice),
+  LogLikelihood = marcus_loglik
+)
+```
+```{r}
+# Convert log-likelihoods to likelihoods
+marcus_likelihood <- exp(marcus_loglik)
+
+# Combine likelihood with Marcus's prior
+marcus_posterior <- marcus_likelihood * marcus_prior
+
+# Normalize posterior probabilities
+marcus_posterior <- marcus_posterior / sum(marcus_posterior)
+
+# Display posterior probabilities
+data.frame(
+  Die = paste0("d", dice),
+  Posterior = marcus_posterior
+)
+```
+```{r}
+# Prepare log-likelihood values for plotting
+marcus_plot_loglik <- marcus_loglik
+marcus_plot_loglik[is.infinite(marcus_plot_loglik)] <-
+  min(marcus_loglik[is.finite(marcus_loglik)]) - 5
+
+# Plot Marcus's log-likelihood
+barplot(marcus_plot_loglik,
+        names.arg = paste0("d", dice),
+        xlab = "Die Type",
+        ylab = "Log-Likelihood",
+        main = "Marcus: Log-Likelihood")
+```
+```{r}
+# Plot Marcus's posterior probabilities
+barplot(marcus_posterior,
+        names.arg = paste0("d", dice),
+        xlab = "Die Type",
+        ylab = "Posterior Probability",
+        main = "Marcus: Posterior Probability",
+        ylim = c(0, 1))
+```
+```{r}
+# Calculate Carrie's log-likelihood for each die type
+carrie_loglik <- sapply(dice, function(x) dice_loglik(carrie_rolls, x))
+
+# Display results
+data.frame(
+  Die = paste0("d", dice),
+  LogLikelihood = carrie_loglik
+)
+```
+```{r}
+# Convert log-likelihoods to likelihoods
+carrie_likelihood <- exp(carrie_loglik)
+
+# Combine likelihood with Carrie's prior
+carrie_posterior <- carrie_likelihood * carrie_prior
+
+# Normalize posterior probabilities
+carrie_posterior <- carrie_posterior / sum(carrie_posterior)
+
+# Display posterior probabilities
+data.frame(
+  Die = paste0("d", dice),
+  Posterior = carrie_posterior
+)
+```
+```{r}
+# Prepare log-likelihood values for plotting
+carrie_plot_loglik <- carrie_loglik
+carrie_plot_loglik[is.infinite(carrie_plot_loglik)] <-
+  min(carrie_loglik[is.finite(carrie_loglik)]) - 5
+
+# Plot Carrie's log-likelihood
+barplot(carrie_plot_loglik,
+        names.arg = paste0("d", dice),
+        xlab = "Die Type",
+        ylab = "Log-Likelihood",
+        main = "Carrie: Log-Likelihood")
+```
+```{r}
+# Plot Carrie's posterior probabilities
+barplot(carrie_posterior,
+        names.arg = paste0("d", dice),
+        xlab = "Die Type",
+        ylab = "Posterior Probability",
+        main = "Carrie: Posterior Probability",
+        ylim = c(0, 1))
+```
+```{r}
+# Calculate Lucy's log-likelihood for each die type
+lucy_loglik <- sapply(dice, function(x) dice_loglik(lucy_rolls, x))
+
+# Display results
+data.frame(
+  Die = paste0("d", dice),
+  LogLikelihood = lucy_loglik
+)
+```
+```{r}
+# Convert log-likelihoods to likelihoods
+lucy_likelihood <- exp(lucy_loglik)
+
+# Combine likelihood with Lucy's prior
+lucy_posterior <- lucy_likelihood * lucy_prior
+
+# Normalize posterior probabilities
+lucy_posterior <- lucy_posterior / sum(lucy_posterior)
+
+# Display posterior probabilities
+data.frame(
+  Die = paste0("d", dice),
+  Posterior = lucy_posterior
+)
+```
+```{r}
+# Prepare log-likelihood values for plotting
+lucy_plot_loglik <- lucy_loglik
+lucy_plot_loglik[is.infinite(lucy_plot_loglik)] <-
+  min(lucy_loglik[is.finite(lucy_loglik)]) - 5
+
+# Plot Lucy's log-likelihood
+barplot(lucy_plot_loglik,
+        names.arg = paste0("d", dice),
+        xlab = "Die Type",
+        ylab = "Log-Likelihood",
+        main = "Lucy: Log-Likelihood")
+```
+```{r}
+# Plot Lucy's posterior probabilities
+barplot(lucy_posterior,
+        names.arg = paste0("d", dice),
+        xlab = "Die Type",
+        ylab = "Posterior Probability",
+        main = "Lucy: Posterior Probability",
+        ylim = c(0, 1))
+```
+## Results and Interpretation
+
+For Benji, the d20 had a posterior probability of 1.00 because his roll of 16 ruled out all of the smaller dice.
+
+For Marcus, the d12 had the highest posterior probability at approximately 0.973, while the d20 had a posterior probability of approximately 0.027. His roll of 12 ruled out the d4, d6, d8, and d10.
+
+For Carrie, the d8 had the highest posterior probability at approximately 0.787, followed by the d10 at approximately 0.206. The d12 and d20 had very low posterior probabilities.
+
+For Lucy, the d6 had the highest posterior probability at approximately 0.739, followed by the d8 at approximately 0.175. Although Lucy's prior probability was highest for the d20 because 60 of her 100 dice were d20s, the observed rolls provided stronger evidence for a smaller die.
+
+Overall, the Bayesian analysis combined the likelihood of the observed rolls with the prior probability based on the number of each die type in each player's collection.
