@@ -1,0 +1,148 @@
+---
+title: "BIO 620 Week 6 – Assignment 4"
+author: "Haille Bright"
+date: "2026-09-30"
+output: word_document
+---
+
+## Assignment 4
+Model selection using the Cell Inhibition dataset.
+```{r}
+# Import the Cell Inhibition dataset
+cell_data <- read.csv("Cell_Inhibition_Schoenfeld.csv",
+                      check.names = FALSE)
+
+# View the structure of the dataset
+str(cell_data)
+
+# View the column names
+names(cell_data)
+```
+```{r}
+# Remove extra spaces from character variables
+cell_data$Inhibitor <- trimws(cell_data$Inhibitor)
+cell_data$`Cell Line` <- trimws(cell_data$`Cell Line`)
+cell_data$VHL <- trimws(cell_data$VHL)
+
+# Convert categorical predictors to factors
+cell_data$Inhibitor <- factor(cell_data$Inhibitor)
+cell_data$`Cell Line` <- factor(cell_data$`Cell Line`)
+cell_data$VHL <- factor(cell_data$VHL)
+
+# Check the variables
+str(cell_data)
+
+# Look at the levels of each categorical predictor
+levels(cell_data$Inhibitor)
+levels(cell_data$`Cell Line`)
+levels(cell_data$VHL)
+
+# Check concentration values
+unique(cell_data$`Concentration uM`)
+```
+```{r}
+# Intercept-only model
+m0 <- lm(PercentSurvival ~ 1, data = cell_data)
+
+# Single-predictor models
+m1 <- lm(PercentSurvival ~ Inhibitor, data = cell_data)
+m2 <- lm(PercentSurvival ~ `Cell Line`, data = cell_data)
+m3 <- lm(PercentSurvival ~ VHL, data = cell_data)
+m4 <- lm(PercentSurvival ~ `Concentration uM`, data = cell_data)
+
+# Two-predictor models
+m5 <- lm(PercentSurvival ~ Inhibitor + `Concentration uM`,
+         data = cell_data)
+
+m6 <- lm(PercentSurvival ~ `Cell Line` + `Concentration uM`,
+         data = cell_data)
+
+m7 <- lm(PercentSurvival ~ VHL + `Concentration uM`,
+         data = cell_data)
+
+# Larger additive models
+m8 <- lm(PercentSurvival ~ Inhibitor + `Cell Line` +
+           VHL + `Concentration uM`,
+         data = cell_data)
+
+# Interaction models
+m9 <- lm(PercentSurvival ~ Inhibitor * `Concentration uM`,
+         data = cell_data)
+
+m10 <- lm(PercentSurvival ~ `Cell Line` * `Concentration uM`,
+          data = cell_data)
+
+m11 <- lm(PercentSurvival ~ VHL * `Concentration uM`,
+          data = cell_data)
+
+# Confirm that the models were created
+m0
+m1
+```
+```{r}
+# Load AICcmodavg package
+library(AICcmodavg)
+
+# Calculate AICc for each model
+AICc(m0)
+AICc(m1)
+AICc(m2)
+AICc(m3)
+AICc(m4)
+AICc(m5)
+AICc(m6)
+AICc(m7)
+AICc(m8)
+AICc(m9)
+AICc(m10)
+AICc(m11)
+```
+```{r}
+# Create a table of AICc values
+model_comparison <- data.frame(
+  Model = c("m0", "m1", "m2", "m3", "m4", "m5",
+            "m6", "m7", "m8", "m9", "m10", "m11"),
+  AICc = c(
+    AICc(m0), AICc(m1), AICc(m2), AICc(m3),
+    AICc(m4), AICc(m5), AICc(m6), AICc(m7),
+    AICc(m8), AICc(m9), AICc(m10), AICc(m11)
+  )
+)
+
+# Calculate Delta AICc
+model_comparison$Delta_AICc <-
+  model_comparison$AICc - min(model_comparison$AICc)
+
+# Sort from lowest to highest AICc
+model_comparison <-
+  model_comparison[order(model_comparison$AICc), ]
+
+model_comparison
+```
+```{r}
+# Examine the best-supported model
+summary(m8)
+
+# Confidence intervals for model coefficients
+confint(m8)
+```
+I chose these models to compare how Inhibitor, Cell Line, VHL status, and Concentration affected Percent Survival both individually and when combined. I started with an intercept-only model as a baseline and then tested each predictor individually. I also tested different combinations of the predictors to see whether including more information improved the model. Finally, I included interactions between Concentration and Inhibitor, Cell Line, and VHL status to test whether the effect of increasing inhibitor concentration changed depending on these variables. I compared all of the models using AICc and ΔAICc to determine which model had the most support.
+Best-Supported Model and Interpretation:
+Based on the AICc results, m8 was the best-supported model, with an AICc of 3896.30 and a ΔAICc of 0. The next closest model was m5, which had a ΔAICc of 7.82. This shows that m8 had much more support compared to the other models I tested. This model included Inhibitor, Cell Line, VHL status, and Concentration as predictors of Percent Survival.
+All four predictors were significant in the model. Cells treated with GNE-140 had about 24.33% higher survival compared to cells treated with DCA. RCC10 cells had about 11.92% lower survival compared to 786-O cells, while VHL+ cells had about 9.38% higher survival compared to VHL- cells. Concentration had a negative relationship with survival, with Percent Survival decreasing by about 4.70% for every 1 µM increase in concentration. Overall, the model explained about 48.7% of the variation in Percent Survival.
+```{r}
+# Plot Percent Survival by inhibitor concentration
+plot(cell_data$`Concentration uM`,
+     cell_data$PercentSurvival,
+     xlab = "Inhibitor Concentration (uM)",
+     ylab = "Percent Survival",
+     main = "Percent Survival vs. Inhibitor Concentration",
+     pch = 16)
+
+# Add regression line
+abline(lm(PercentSurvival ~ `Concentration uM`,
+          data = cell_data),
+       lwd = 2)
+```
+Figure Interpretation:
+The graph shows an overall negative relationship between inhibitor concentration and Percent Survival. As inhibitor concentration increased, Percent Survival generally decreased. There was more variation in survival at the lower concentrations, especially at 0 and 4 µM, while survival values were generally lower at the highest concentration of 20 µM. This supports the results of the best model, which showed that concentration had a significant negative relationship with Percent Survival.
