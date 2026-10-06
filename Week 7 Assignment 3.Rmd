@@ -1,0 +1,46 @@
+---
+title: "Week 7 Assignment 3"
+author: "Haille Bright"
+date: "2026-10-06"
+output: word_document
+---
+```{r}
+bolger <- read.csv(file.choose())
+
+head(bolger)
+str(bolger)
+summary(bolger)
+```
+```{r}
+# Logistic regression models
+
+m1_b <- glm(RODENTSP ~ PERSHRUB,
+            family = binomial, data = bolger)
+
+m2_b <- glm(RODENTSP ~ DISTX,
+            family = binomial, data = bolger)
+
+m3_b <- glm(RODENTSP ~ AGE,
+            family = binomial, data = bolger)
+
+m4_b <- glm(RODENTSP ~ PERSHRUB + DISTX + AGE,
+            family = binomial, data = bolger)
+```
+```{r}
+AIC(m1_b, m2_b, m3_b, m4_b)
+```
+
+```{r}
+aic_bolger <- AIC(m1_b, m2_b, m3_b, m4_b)
+
+aic_bolger$Delta_AIC <- aic_bolger$AIC - min(aic_bolger$AIC)
+
+aic_bolger
+```
+```{r}
+summary(m1_b)
+```
+```{r}
+anova(m1_b, test = "Chisq")
+```
+Model selection showed that the best logistic regression model included PERSHRUB as the predictor (AIC = 24.05). PERSHRUB had a significant positive relationship with RODENTSP (p < 0.001), meaning that as PERSHRUB increased, the probability of RODENTSP being present also increased. The other models had higher AIC values, suggesting that PERSHRUB alone was the best predictor of RODENTSP in this dataset.
