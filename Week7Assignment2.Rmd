@@ -1,0 +1,59 @@
+---
+title: "Week 7 Assignment 2"
+author: "Haille Bright"
+date: "2026-10-06"
+output: word_document
+---
+
+## Assignment 2: Species Dataset
+
+```{r}
+species <- read.csv(file.choose())
+```
+```{r}
+head(species)
+```
+```{r}
+str(species)
+summary(species)
+```
+```{r}
+species$pH <- as.factor(species$pH)
+
+str(species)
+```
+```{r}
+# Poisson GLM models
+
+m1 <- glm(Species ~ Biomass, 
+          family = poisson, data = species)
+
+m2 <- glm(Species ~ pH, 
+          family = poisson, data = species)
+
+m3 <- glm(Species ~ Biomass + pH, 
+          family = poisson, data = species)
+
+m4 <- glm(Species ~ Biomass * pH, 
+          family = poisson, data = species)
+```
+```{r}
+AIC(m1, m2, m3, m4)
+```
+```{r}
+aic_values <- AIC(m1, m2, m3, m4)
+
+aic_values$Delta_AIC <- aic_values$AIC - min(aic_values$AIC)
+
+aic_values
+```
+```{r}
+summary(m4)
+```
+```{r}
+anova(m4, test = "Chisq")
+```
+```{r}
+deviance(m4) / df.residual(m4)
+```
+The model selection showed that the best model was the interaction model including biomass, pH, and biomass × pH (AIC = 514.39). Both biomass and pH had significant effects on species count, and there was also a significant interaction between biomass and pH (p < 0.001). This suggests that the relationship between biomass and species count changes depending on pH level. The dispersion value was 0.99, indicating that overdispersion was not a concern for the Poisson model.
