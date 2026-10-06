@@ -1,0 +1,55 @@
+---
+title: "Week7Assignment4"
+author: "Haille Bright"
+date: "2026-10-06"
+output: word_document
+---
+## Assignment 4: Mole Rat Dataset
+
+```{r}
+molerat <- read.csv(file.choose())
+
+head(molerat)
+str(molerat)
+summary(molerat)
+```
+```{r}
+molerat$caste <- as.factor(molerat$caste)
+
+str(molerat)
+```
+
+```{r}
+# Gamma GLM models
+
+m1_m <- glm(lnenergy ~ lnmass,
+            family = Gamma(link = "log"), data = molerat)
+
+m2_m <- glm(lnenergy ~ caste,
+            family = Gamma(link = "log"), data = molerat)
+
+m3_m <- glm(lnenergy ~ lnmass + caste,
+            family = Gamma(link = "log"), data = molerat)
+
+m4_m <- glm(lnenergy ~ lnmass * caste,
+            family = Gamma(link = "log"), data = molerat)
+```
+
+```{r}
+AIC(m1_m, m2_m, m3_m, m4_m)
+```
+
+```{r}
+aic_molerat <- AIC(m1_m, m2_m, m3_m, m4_m)
+
+aic_molerat$Delta_AIC <- aic_molerat$AIC - min(aic_molerat$AIC)
+
+aic_molerat
+```
+```{r}
+summary(m3_m)
+```
+```{r}
+anova(m3_m, test = "Chisq")
+```
+Model selection showed that the best Gamma GLM included lnmass and caste as predictors of lnenergy (AIC = 18.79). Both lnmass (p < 0.001) and caste (p = 0.008) had significant effects on lnenergy. The positive effects suggest to me that lnenergy increased with lnmass and was higher for workers compared with the lazy caste. The interaction model had a similar AIC, but the additive model was selected because it had the lowest AIC and was simpler.
