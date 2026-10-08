@@ -1,0 +1,109 @@
+---
+title: "Week7Assignments"
+author: "Haille Bright"
+date: "2026-10-06"
+output: word_document
+---
+## Assignment 2: Species Dataset
+```{r}
+# Import Species dataset
+species <- read.csv("species.csv")
+
+# Convert pH to a factor
+species$pH <- as.factor(species$pH)
+
+# Poisson GLM candidate models
+m1 <- glm(Species ~ Biomass,
+          family = poisson, data = species)
+
+m2 <- glm(Species ~ pH,
+          family = poisson, data = species)
+
+m3 <- glm(Species ~ Biomass + pH,
+          family = poisson, data = species)
+
+m4 <- glm(Species ~ Biomass * pH,
+          family = poisson, data = species)
+
+# Model selection
+aic_values <- AIC(m1, m2, m3, m4)
+aic_values$Delta_AIC <- aic_values$AIC - min(aic_values$AIC)
+aic_values
+
+# Best model
+summary(m4)
+
+# ANOVA
+anova(m4, test = "Chisq")
+
+# Check overdispersion
+deviance(m4) / df.residual(m4)
+```
+Model selection showed that the best model was the interaction model including biomass, pH, and biomass × pH (AIC = 514.39). Both biomass and pH had significant effects on species count, and there was also a significant interaction between biomass and pH (p < 0.001). This suggests that the relationship between biomass and species count changes depending on pH level. The dispersion value was 0.99, indicating that overdispersion was not a concern for the Poisson model.
+
+## Assignment 3: Bolger Dataset
+
+```{r}
+# Import Bolger dataset
+bolger <- read.csv("bolger.csv")
+
+# Logistic regression candidate models
+m1_b <- glm(RODENTSP ~ PERSHRUB,
+            family = binomial, data = bolger)
+
+m2_b <- glm(RODENTSP ~ DISTX,
+            family = binomial, data = bolger)
+
+m3_b <- glm(RODENTSP ~ AGE,
+            family = binomial, data = bolger)
+
+m4_b <- glm(RODENTSP ~ PERSHRUB + DISTX + AGE,
+            family = binomial, data = bolger)
+
+# Model selection
+aic_bolger <- AIC(m1_b, m2_b, m3_b, m4_b)
+aic_bolger$Delta_AIC <- aic_bolger$AIC - min(aic_bolger$AIC)
+aic_bolger
+
+# Best model
+summary(m1_b)
+
+# ANOVA
+anova(m1_b, test = "Chisq")
+```
+Model selection showed that the best logistic regression model included PERSHRUB as the predictor (AIC = 24.05). PERSHRUB had a significant positive relationship with RODENTSP (p < 0.001), meaning that as PERSHRUB increased, the probability of RODENTSP being present also increased. The other models had higher AIC values, suggesting that PERSHRUB alone was the best predictor of RODENTSP in this dataset.
+
+
+## Assignment 4: Mole Rat Dataset
+```{r}
+# Import Mole Rat dataset
+molerat <- read.csv("molerat.csv")
+
+# Convert caste to a factor
+molerat$caste <- as.factor(molerat$caste)
+
+# Gamma GLM candidate models
+m1_m <- glm(lnenergy ~ lnmass,
+            family = Gamma(link = "log"), data = molerat)
+
+m2_m <- glm(lnenergy ~ caste,
+            family = Gamma(link = "log"), data = molerat)
+
+m3_m <- glm(lnenergy ~ lnmass + caste,
+            family = Gamma(link = "log"), data = molerat)
+
+m4_m <- glm(lnenergy ~ lnmass * caste,
+            family = Gamma(link = "log"), data = molerat)
+
+# Model selection
+aic_molerat <- AIC(m1_m, m2_m, m3_m, m4_m)
+aic_molerat$Delta_AIC <- aic_molerat$AIC - min(aic_molerat$AIC)
+aic_molerat
+
+# Best model
+summary(m3_m)
+
+# ANOVA
+anova(m3_m, test = "Chisq")
+```
+Model selection showed that the best Gamma GLM included lnmass and caste as predictors of lnenergy (AIC = 18.79). Both lnmass (p < 0.001) and caste (p = 0.008) had significant effects on lnenergy. The positive effects suggest that lnenergy increased with lnmass and was higher for workers compared with the lazy caste. The interaction model had a similar AIC, but the additive model was selected because it had the lowest AIC and was simpler.
