@@ -1,0 +1,105 @@
+---
+title: "BIO 620 Week 8 Presentation"
+author: "Haille Bright"
+date: "2026-10-21"
+output: word_document
+---
+
+## PGLS Analysis of Barbet Traits
+```{r}
+library(ape)
+library(nlme)
+library(geiger)
+
+# Import the barbet trait data
+barbet_data <- read.csv(
+  "~/Downloads/Barbetdata.csv",
+  header = TRUE,
+  row.names = 1
+)
+
+# Import the phylogenetic tree
+barbet_tree <- read.nexus(
+  "~/Downloads/BarbetTree.nex"
+)
+
+# Check the data and tree
+dim(barbet_data)
+length(barbet_tree$tip.label)
+head(barbet_data)
+
+# Check species matches
+name_check <- geiger::name.check(barbet_tree, barbet_data)
+
+# Count species that do not match
+length(name_check$tree_not_data)
+length(name_check$data_not_tree)
+
+# Show matching species
+intersect(barbet_tree$tip.label, rownames(barbet_data))
+# Identify species present in both datasets
+matching_species <- intersect(
+  barbet_tree$tip.label,
+  rownames(barbet_data)
+)
+
+# Remove species without trait data
+matched_tree <- ape::keep.tip(
+  barbet_tree,
+  matching_species
+)
+
+# Arrange trait data in the same order as the tree
+matched_data <- barbet_data[
+  matched_tree$tip.label, ,
+  drop = FALSE
+]
+
+# Check the results
+length(matched_tree$tip.label)
+dim(matched_data)
+# Examine wing and coloration measurements
+summary(matched_data[, c("wing", "colour")])
+
+# Check for missing values
+colSums(is.na(matched_data[, c("wing", "colour")]))
+
+# Check branch lengths
+is.null(matched_tree$edge.length)
+# Load packages
+library(ape)
+library(nlme)
+
+# Add species names as a column
+matched_data$Species <- rownames(matched_data)
+
+# Create phylogenetic correlation structure
+phylo_cor <- corBrownian(
+  phy = matched_tree,
+  form = ~ Species
+)
+
+# Run PGLS analysis
+pgls_model <- gls(
+  wing ~ colour,
+  data = matched_data,
+  correlation = phylo_cor,
+  method = "ML"
+)
+
+# View results
+summary(pgls_model)
+summary(matched_data$colour)
+sort(unique(matched_data$colour))
+# Scatterplot of coloration and wing measurements
+plot(
+  matched_data$colour,
+  matched_data$wing,
+  main = "Coloration and Wing Measurements in Barbets",
+  xlab = "Coloration Score",
+  ylab = "Wing Measurement",
+  pch = 19,
+  col = "steelblue"
+)
+```
+
