@@ -1,0 +1,19 @@
+---
+title: "BIO 620 Week 8 Assignments"
+author: "Haille Bright"
+date: "2026-10-21"
+output: word_document
+---
+
+## Assignment 3: Consensus Phylogenetic Tree
+
+```{r}
+library(phangorn)
+
+trees <- read.nexus("/Users/haillebright/Downloads/tree-pruner-d3e061e9-25c5-45cd-952b-b1f175bd99c0/output.nex")
+
+consensus_tree <- ape::consensus(trees, p = 0.5)
+
+plot(consensus_tree, cex = 0.4, no.margin = TRUE)
+```
+
